@@ -32,7 +32,6 @@ public class MainActivity extends AppCompatActivity {
 
         textView = (TextView) findViewById(R.id.txtInfo);
 
-
     }
 
     @Override
