@@ -32,10 +32,17 @@ in Application:
         @Override
         public void onCreate() {
             super.onCreate();
-            SPAccessDBHelper.setInstance(getApplicationContext());
-    
-            SPAccessConfigs.setEnableLog(true);
-            SPAccessDBUtils.backupDB(getApplicationContext(), "main.db", null);
+			SPAccessDBHelper.setInstance(getApplicationContext());
+
+			SPAccessConfigs.setupInitFirst(getApplicationContext(), "main.db", null);
+			SPAccessConfigs.setEnableLog(true);
+
+			//option 1: move db file to sdcard
+	//        SPAccessDBUtils.backupDB();
+
+			//option 2: register get db via socket
+			SPAccessConfigs.setRegisterBackup(true);
+			SPAccessSocketClientComm.startDiamond(1234);
         }
     }
 
