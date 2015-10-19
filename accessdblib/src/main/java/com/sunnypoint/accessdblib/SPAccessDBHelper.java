@@ -13,7 +13,7 @@ import java.util.HashMap;
 /**
  * Created by NhanCao on 19-Oct-15.
  */
-public class DBHelper extends SQLiteOpenHelper {
+public class SPAccessDBHelper extends SQLiteOpenHelper {
 
     public static final String DATABASE_NAME = "main.db";
     public static final String CONTACTS_TABLE_NAME = "contacts";
@@ -23,22 +23,22 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String CONTACTS_COLUMN_STREET = "street";
     public static final String CONTACTS_COLUMN_CITY = "place";
     public static final String CONTACTS_COLUMN_PHONE = "phone";
-    private static DBHelper instance;
+    private static SPAccessDBHelper instance;
     SQLiteDatabase db = this.getWritableDatabase();
     private HashMap hp;
 
-    public DBHelper(Context context) {
+    public SPAccessDBHelper(Context context) {
         super(context, DATABASE_NAME, null, 1);
     }
 
     //must call setInstance first
-    public static DBHelper getInstance() {
+    public static SPAccessDBHelper getInstance() {
         return instance;
     }
 
-    public static DBHelper setInstance(Context context) {
+    public static SPAccessDBHelper setInstance(Context context) {
         if (instance == null) {
-            instance = new DBHelper(context);
+            instance = new SPAccessDBHelper(context);
         }
         return instance;
     }

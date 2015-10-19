@@ -25,4 +25,5 @@ dependencies {
     compile 'com.android.support:appcompat-v7:23.1.0'
     compile 'com.android.support:design:23.1.0'
     compile project(':accessdblib')
+//    compile 'com.github.cvnhan:androidaccessdb:a62c687737'
 }

@@ -2,20 +2,20 @@ package com.sunnypoint.androidaccessdb;
 
 import android.app.Application;
 
-import com.sunnypoint.accessdblib.DBHelper;
-import com.sunnypoint.accessdblib.DBUtils;
+import com.sunnypoint.accessdblib.SPAccessConfigs;
+import com.sunnypoint.accessdblib.SPAccessDBHelper;
+import com.sunnypoint.accessdblib.SPAccessDBUtils;
 
 /**
  * Created by NhanCao on 19-Oct-15.
  */
 public class App extends Application {
-
-
     @Override
     public void onCreate() {
         super.onCreate();
-        DBHelper.setInstance(getApplicationContext());
+        SPAccessDBHelper.setInstance(getApplicationContext());
 
-        DBUtils.backupDB(getApplicationContext(), "main.db", null);
+        SPAccessConfigs.setEnableLog(true);
+        SPAccessDBUtils.backupDB(getApplicationContext(), "main.db", null);
     }
 }

@@ -2,7 +2,6 @@ package com.sunnypoint.accessdblib;
 
 import android.content.Context;
 import android.os.Environment;
-import android.util.Log;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -13,9 +12,9 @@ import java.nio.channels.FileChannel;
 /**
  * Created by NhanCao on 19-Oct-15.
  */
-public class DBUtils {
+public class SPAccessDBUtils {
 
-    private static final String TAG = DBUtils.class.getName();
+    private static final String TAG = SPAccessDBUtils.class.getName();
 
     public static String getPackageName(Context applicationContext) {
         return applicationContext.getPackageName();
@@ -36,8 +35,7 @@ public class DBUtils {
             if (sd.canWrite()) {
                 String currentDBPath = (path == null) ? "/data/" + getPackageName(applicationContext) + "/databases/" + dbName : path;
                 String backupDBPath = "main.db";
-                if (BuildConfig.DEBUG)
-                    Log.e(TAG, "Backup: " + data.getAbsolutePath() + currentDBPath + " to " + sd.getAbsolutePath() + currentDBPath);
+                SPAccessConfigs.loge(TAG, "Backup: " + data.getAbsolutePath() + currentDBPath + " to " + sd.getAbsolutePath() + currentDBPath);
                 File currentDB = new File(data, currentDBPath);
                 File backupDB = new File(sd, backupDBPath);
 
@@ -47,16 +45,14 @@ public class DBUtils {
                     dst.transferFrom(src, 0, src.size());
                     src.close();
                     dst.close();
-                    if (BuildConfig.DEBUG)
-                        Log.e(TAG, "Backup: successfully");
+                    SPAccessConfigs.loge(TAG, "Backup: successfully");
                 } else {
-                    if (BuildConfig.DEBUG)
-                        Log.e(TAG, "Backup: failed - currentDB not exists");
+                    SPAccessConfigs.loge(TAG, "Backup: failed - currentDB not exists");
                 }
 
             }
         } catch (Exception e) {
-            Log.e(TAG, "Backup: " + e.toString());
+            SPAccessConfigs.loge(TAG, "Backup: " + e.toString());
         }
     }
 

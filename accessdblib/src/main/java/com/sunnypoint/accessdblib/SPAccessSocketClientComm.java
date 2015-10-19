@@ -11,10 +11,10 @@ import java.net.Socket;
 /**
  * Created by NhanCao on 19-Oct-15.
  */
-public class SocketClientComm extends Thread {
+public class SPAccessSocketClientComm extends Thread {
     private ServerSocket serverSocket;
 
-    public SocketClientComm(int port) throws IOException {
+    public SPAccessSocketClientComm(int port) throws IOException {
         serverSocket = new ServerSocket(port);
         serverSocket.setSoTimeout(10000);
     }
