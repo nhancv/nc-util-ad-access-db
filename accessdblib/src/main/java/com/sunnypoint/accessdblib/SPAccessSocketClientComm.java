@@ -1,8 +1,14 @@
 package com.sunnypoint.accessdblib;
 
+import java.io.BufferedInputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
@@ -27,7 +33,7 @@ public class SPAccessSocketClientComm extends Thread {
         return instance;
     }
 
-    public static void startDiamond(Integer port) {
+    public static void startDaemon(Integer port) {
         if (port != null)
             SPAccessConfigs.PORT = port;
         try {
@@ -48,25 +54,76 @@ public class SPAccessSocketClientComm extends Thread {
                         + server.getRemoteSocketAddress());
                 DataInputStream in =
                         new DataInputStream(server.getInputStream());
-                solveOptions(in.readUTF());
                 DataOutputStream out =
                         new DataOutputStream(server.getOutputStream());
-                out.writeUTF("Ok - " + server.getLocalSocketAddress());
+                solveOptions(server, in, out);
+                in.close();
+                out.close();
                 server.close();
             } catch (SocketTimeoutException s) {
                 SPAccessConfigs.loge(TAG, "Socket timed out!");
-                break;
             } catch (IOException e) {
                 e.printStackTrace();
-                break;
+                SPAccessConfigs.loge(TAG, e.toString());
+            } catch (Exception e) {
+                SPAccessConfigs.loge(TAG, e.toString());
             }
         }
     }
 
-    public void solveOptions(String input) {
+    public synchronized void solveOptions(Socket socket, DataInputStream in, DataOutputStream out) throws IOException {
+        String input = in.readUTF();
         SPAccessConfigs.loge(TAG, input);
-        if (input.equals(SPAccessConfigs.GETDP_COMMAND) && SPAccessConfigs.isRegisterBackup())
-            SPAccessDBUtils.backupDB();
+        try {
+            if (SPAccessConfigs.isRegisterBackup()) {
+                if (SPAccessConfigs.isRegisterSocketMovesdcard() && input.equals(SPAccessConfigs.GETDP_COMMAND)) {
+                    SPAccessDBUtils.backupDB();
+                    out.writeUTF("Ok - " + socket.getLocalSocketAddress());
+
+                } else if (SPAccessConfigs.isRegisterSocketSendfile() && input.equals(SPAccessConfigs.GETFILESK_COMMAND)) {
+                    sendFile(socket, out);
+
+                } else if (SPAccessConfigs.isRegisterSocketReceivefile() && input.contains(SPAccessConfigs.SETFILESK_COMMAND)) {
+                    int fileSize = in.readInt();
+                    receiveFile(socket, fileSize);
+                }
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            SPAccessConfigs.loge(TAG, e.toString());
+        }
     }
 
+    private void receiveFile(Socket client, int fileSize) throws IOException {
+        InputStream is = client.getInputStream();
+        int bytesRead;
+        int byteCounts = 0;
+        OutputStream output = new FileOutputStream(SPAccessDBUtils.getDBSDCardPath());
+        int sizeBuffer = 1024;
+        byte[] buffer = new byte[sizeBuffer];
+        while ((bytesRead = is.read(buffer, 0, Math.max(sizeBuffer, Math.min(sizeBuffer, fileSize - byteCounts)))) != -1) {
+            output.write(buffer, 0, bytesRead);
+            byteCounts += bytesRead;
+            if (byteCounts >= fileSize) {
+                break;
+            }
+        }
+        output.close();
+        SPAccessDBUtils.copytoData();
+    }
+
+    private void sendFile(Socket client, DataOutputStream out) throws IOException {
+//        SPAccessDBUtils.copytoSDCard();
+//        File myFile = SPAccessDBUtils.getDBSDCardPath();
+        File myFile = SPAccessDBUtils.getDBDataPath();
+        out.writeInt((int) myFile.length());
+        byte[] mybytearray = new byte[(int) myFile.length()];
+        BufferedInputStream bis = new BufferedInputStream(new FileInputStream(myFile));
+        bis.read(mybytearray, 0, mybytearray.length);
+        OutputStream os = client.getOutputStream();
+        os.write(mybytearray, 0, mybytearray.length);
+        os.flush();
+        SPAccessConfigs.loge(TAG, "send file socket " + myFile.length() + " bytes");
+    }
 }

@@ -23,7 +23,12 @@ public class App extends Application {
 
         //option 2: register get db via socket
         SPAccessConfigs.setRegisterBackup(true);
-        SPAccessSocketClientComm.startDiamond(1234);
+//        SPAccessSocketClientComm.startDaemon(1234);
+
+        //option 3:
+        SPAccessConfigs.enableAllSocketFeature(true);
+        SPAccessSocketClientComm.startDaemon(1234);
+
 
 
     }

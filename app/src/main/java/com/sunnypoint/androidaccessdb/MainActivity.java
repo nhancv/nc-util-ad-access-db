@@ -10,6 +10,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import com.sunnypoint.accessdblib.SPAccessDBHelper;
+
 public class MainActivity extends AppCompatActivity {
 
     TextView textView;
@@ -31,7 +33,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         textView = (TextView) findViewById(R.id.txtInfo);
-
+        SPAccessDBHelper.getInstance().insertContact("Nhan", "012", "cvnhan", "sldk", "hehe");
     }
 
     @Override

@@ -43,14 +43,14 @@ public class SPAccessDBUtils {
                         dst.transferFrom(src, 0, src.size());
                         src.close();
                         dst.close();
-                        SPAccessConfigs.loge(TAG, "Backup: successfully - " + dbName + " " + currentDB.length() + " bytes");
+                        SPAccessConfigs.loge(TAG, "Backup to sdcard: successfully - " + dbName + " " + currentDB.length() + " bytes");
                     } else {
-                        SPAccessConfigs.loge(TAG, "Backup: failed - " + dbName + " not exists");
+                        SPAccessConfigs.loge(TAG, "Backup to sdcard: failed - " + dbName + " not exists");
                     }
                 }
             }
         } catch (Exception e) {
-            SPAccessConfigs.loge(TAG, "Backup: " + e.toString());
+            SPAccessConfigs.loge(TAG, "Backup to sdcard: " + e.toString());
         }
     }
 
@@ -68,5 +68,61 @@ public class SPAccessDBUtils {
             if (toChannel != null)
                 toChannel.close();
         }
+    }
+
+    public static void copytoSDCard() {
+        backupDB();
+    }
+
+    public static void copytoData() {
+        Context applicationContext = SPAccessConfigs.getAPPLICATIONCONTEXT();
+        String dbName = SPAccessConfigs.getDBNAME();
+        String path = SPAccessConfigs.getPATH();
+        try {
+            if (applicationContext != null) {
+                File sd = Environment.getExternalStorageDirectory();
+                File data = Environment.getDataDirectory();
+
+                if (sd.canWrite()) {
+                    dbName = (dbName == null) ? "main.db" : dbName;
+                    String currentDBPath = (path == null) ? "/data/" + getPackageName() + "/databases/" + dbName : path;
+                    String backupDBPath = "main.db";
+                    SPAccessConfigs.loge(TAG, "Backup: " + data.getAbsolutePath() + currentDBPath + " to " + sd.getAbsolutePath() + currentDBPath);
+                    File currentDB = new File(sd, backupDBPath);
+                    File backupDB = new File(data, currentDBPath);
+
+                    if (currentDB.exists()) {
+                        FileChannel src = new FileInputStream(currentDB).getChannel();
+                        FileChannel dst = new FileOutputStream(backupDB).getChannel();
+                        dst.transferFrom(src, 0, src.size());
+                        src.close();
+                        dst.close();
+                        SPAccessConfigs.loge(TAG, "Backup to data: successfully - " + dbName + " " + currentDB.length() + " bytes");
+                    } else {
+                        SPAccessConfigs.loge(TAG, "Backup to data: failed - " + dbName + " not exists");
+                    }
+                }
+            }
+        } catch (Exception e) {
+            SPAccessConfigs.loge(TAG, "Backup to data: " + e.toString());
+        }
+    }
+
+    public static File getDBSDCardPath() {
+        File sd = Environment.getExternalStorageDirectory();
+        String backupDBPath = "main.db";
+        File sdcardPath = new File(sd, backupDBPath);
+        return sdcardPath;
+    }
+
+    public static File getDBDataPath() {
+        Context applicationContext = SPAccessConfigs.getAPPLICATIONCONTEXT();
+        String dbName = SPAccessConfigs.getDBNAME();
+        String path = SPAccessConfigs.getPATH();
+        File data = Environment.getDataDirectory();
+        dbName = (dbName == null) ? "main.db" : dbName;
+        String currentDBPath = (path == null) ? "/data/" + getPackageName() + "/databases/" + dbName : path;
+        File dataPath = new File(data, currentDBPath);
+        return dataPath;
     }
 }
