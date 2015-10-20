@@ -27,24 +27,30 @@ How to use:
 -----------
 
 in Application:
+```java
 
     public class App extends Application {
-        @Override
-        public void onCreate() {
-            super.onCreate();
-			SPAccessDBHelper.setInstance(getApplicationContext());
+    @Override
+    public void onCreate() {
+        super.onCreate();
 
-			SPAccessConfigs.setupInitFirst(getApplicationContext(), "main.db", null);
-			SPAccessConfigs.setEnableLog(true);
+        SPAccessConfigs.setupInitFirst(getApplicationContext(), "main.db", null);
+        SPAccessConfigs.setEnableLog(true);
 
-			//option 1: move db file to sdcard
-	//        SPAccessDBUtils.backupDB();
+        //option 1: move db file to sdcard
+//        SPAccessDBUtils.backupDB();
 
-			//option 2: register get db via socket
-			SPAccessConfigs.setRegisterBackup(true);
-			SPAccessSocketClientComm.startDiamond(1234);
-        }
+        //option 2: register get db via socket
+        SPAccessConfigs.setRegisterBackup(true);
+//        SPAccessSocketClientComm.startDaemon(1234);
+
+        //option 3:
+        SPAccessConfigs.enableAllSocketFeature(true);
+        SPAccessSocketClientComm.startDaemon(1234);
     }
+}
+
+```
 
 in manifests:
 
