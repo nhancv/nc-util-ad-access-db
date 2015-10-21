@@ -100,7 +100,7 @@ public class SPAccessSocketClientComm extends Thread {
         int bytesRead;
         int byteCounts = 0;
         OutputStream output = new FileOutputStream(SPAccessDBUtils.getDBSDCardPath().getPath()+".zip");
-        int sizeBuffer = 1024;
+        int sizeBuffer = 8096;
         byte[] buffer = new byte[sizeBuffer];
         while ((bytesRead = is.read(buffer, 0, Math.max(sizeBuffer, Math.min(sizeBuffer, fileSize - byteCounts)))) != -1) {
             output.write(buffer, 0, bytesRead);
