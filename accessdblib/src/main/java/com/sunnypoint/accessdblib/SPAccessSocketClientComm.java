@@ -100,7 +100,7 @@ public class SPAccessSocketClientComm extends Thread {
         int bytesRead;
         int byteCounts = 0;
         OutputStream output = new FileOutputStream(SPAccessDBUtils.getDBSDCardPath().getPath()+".zip");
-        int sizeBuffer = 8096;
+        int sizeBuffer = SPAccessConfigs.BUFFER_SIZE;
         byte[] buffer = new byte[sizeBuffer];
         while ((bytesRead = is.read(buffer, 0, Math.max(sizeBuffer, Math.min(sizeBuffer, fileSize - byteCounts)))) != -1) {
             output.write(buffer, 0, bytesRead);
@@ -117,12 +117,15 @@ public class SPAccessSocketClientComm extends Thread {
         SPAccessDBUtils.copytoSDCardandZip();
         File myFile = new File(SPAccessDBUtils.getDBSDCardPath().getPath()+".zip");
         out.writeInt((int) myFile.length());
-        byte[] mybytearray = new byte[(int) myFile.length()];
+        int sizeBuffer = SPAccessConfigs.BUFFER_SIZE;
+        byte[] buffer = new byte[sizeBuffer];
         BufferedInputStream bis = new BufferedInputStream(new FileInputStream(myFile));
-        bis.read(mybytearray, 0, mybytearray.length);
-        OutputStream os = client.getOutputStream();
-        os.write(mybytearray, 0, mybytearray.length);
-        os.flush();
+        int len;
+        while ((len = bis.read(buffer)) > 0) {
+            out.write(buffer, 0, len);
+        }
+        bis.close();
+        out.close();
         SPAccessConfigs.loge(TAG, "send file socket " + myFile.length() + " bytes");
     }
 }

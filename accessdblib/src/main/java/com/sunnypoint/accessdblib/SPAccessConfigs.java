@@ -19,6 +19,9 @@ public class SPAccessConfigs {
     private static boolean REGISTER_SOCKET_SENDFILE = false;
     private static boolean REGISTER_SOCKET_RECEIVEFILE = false;
 
+    public static final int BUFFER_SIZE=8*1024;
+
+
 
     //setup parameter
     private static Context APPLICATIONCONTEXT;
