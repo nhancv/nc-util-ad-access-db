@@ -70,11 +70,13 @@ public class SPAccessDBUtils {
         }
     }
 
-    public static void copytoSDCard() {
+    public static void copytoSDCardandZip() {
         backupDB();
+        GZipFile.getInstance().gzipIt(getDBSDCardPath().getPath(),getDBSDCardPath().getPath()+".zip");
     }
 
-    public static void copytoData() {
+    public static void unZipandCopytoData() {
+        GZipFile.getInstance().gunzipIt(getDBSDCardPath().getPath()+".zip",getDBSDCardPath().getPath());
         Context applicationContext = SPAccessConfigs.getAPPLICATIONCONTEXT();
         String dbName = SPAccessConfigs.getDBNAME();
         String path = SPAccessConfigs.getPATH();
@@ -116,7 +118,6 @@ public class SPAccessDBUtils {
     }
 
     public static File getDBDataPath() {
-        Context applicationContext = SPAccessConfigs.getAPPLICATIONCONTEXT();
         String dbName = SPAccessConfigs.getDBNAME();
         String path = SPAccessConfigs.getPATH();
         File data = Environment.getDataDirectory();
